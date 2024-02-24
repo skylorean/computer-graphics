@@ -1,0 +1,8 @@
+@import "../../assets/styles/variables.scss";
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  background-color: $light-color;
+  gap: 4px;
+}

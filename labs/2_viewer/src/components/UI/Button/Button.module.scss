@@ -1,0 +1,15 @@
+@import "../../../assets/styles/variables.scss";
+
+.btn {
+  background-color: $primary-color;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: $primary-hover-color;
+  }
+}
