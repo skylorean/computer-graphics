@@ -1,7 +1,7 @@
 const ACCELERATION = 1;
 
 class MovingLetterData {
-  time = 0;
+  time = 0; // связать тайм с прошедшим временем
   shift = 0;
   startingSpeed = 1;
 
@@ -52,7 +52,7 @@ window.onload = () => {
     }
   };
 
-  setInterval(loop, 20);
+  setInterval(loop, 20); //requestAnimationFrame вместо setinterval
 };
 
 function draw(ctx, letters) {
@@ -79,7 +79,7 @@ function drawFirstLetter(ctx, shift) {
   ctx.fillStyle = "blue";
   ctx.strokeStyle = "blue";
   ctx.lineWidth = 10;
-
+  // трансформации у канваса ко всем выводимым объектам
   ctx.fillRect(10, 300 - shift, 10, 200);
 
   ctx.beginPath();
