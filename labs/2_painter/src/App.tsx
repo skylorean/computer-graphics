@@ -1,35 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import AccessibilityBar from "./components/AccessibilityBar";
+import DrawingBoard from "./components/DrawingBoard";
+import { BrushContext } from "./context/BrushContext";
+import { IBrush } from "./shared/types";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [ctx, setCtx] = useState<CanvasRenderingContext2D | undefined | null>(
+    null
+  );
+  const [brush, setBrush] = useState<IBrush>({
+    type: "PENCIL",
+    width: 3,
+    color: "#000000",
+  });
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <BrushContext.Provider value={{ brush, setBrush }}>
+      <div className="w-screen h-screen bg-neutral-200 flex flex-col">
+        {/* Menu, save */}
+        <AccessibilityBar ctx={ctx}></AccessibilityBar>
+
+        {/* Canvas */}
+        <div className="w-full h-full overflow-auto relative">
+          <DrawingBoard ctx={ctx} setCtx={setCtx}></DrawingBoard>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </BrushContext.Provider>
+  );
 }
 
-export default App
+export default App;

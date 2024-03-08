@@ -3,4 +3,22 @@
   height: 600px;
   width: 100%;
   border: 1px dashed gray;
+  position: relative;
+}
+
+// .container {
+//   border: 1px solid black;
+//   height: 800px;
+//   width: 800px;
+//   overflow: hidden;
+// }
+
+.box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: hotpink;
+  height: 60px;
+  width: 60px;
+  cursor: pointer;
 }

@@ -2,11 +2,16 @@ import { FC, useContext } from "react";
 import styles from "./DiscoveredElementsArea.module.scss";
 import Element from "../Element/Element";
 import ElementsContext from "../../context/ElementsContext";
+import { IElement } from "../../shared/ElementType";
 
-interface DiscoveredElementsAreaProps {}
+interface DiscoveredElementsAreaProps {
+  setDraggedElement: (element: IElement | null) => void;
+}
 
-const DiscoveredElementsArea: FC<DiscoveredElementsAreaProps> = () => {
-  const { elements, setElements } = useContext(ElementsContext)!;
+const DiscoveredElementsArea: FC<DiscoveredElementsAreaProps> = ({
+  setDraggedElement,
+}) => {
+  const { elements } = useContext(ElementsContext)!;
 
   return (
     <div className={styles["discovered-elements-area"]}>
@@ -14,7 +19,11 @@ const DiscoveredElementsArea: FC<DiscoveredElementsAreaProps> = () => {
         {elements.map(
           // (item) => item.unlocked && <Element element={item} key={item.type} />
           (item) => (
-            <Element element={item} key={item.type} />
+            <Element
+              element={item}
+              key={item.type}
+              setDraggedElement={setDraggedElement}
+            />
           )
         )}
       </div>
