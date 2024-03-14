@@ -15,7 +15,6 @@ export interface SelectedImage {
 }
 
 function App() {
-  // const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<SelectedImage | null>(
     null
   );
@@ -24,10 +23,8 @@ function App() {
     if (files && files.length > 0) {
       const file = files[0];
       const reader = new FileReader();
-      console.log("file", file);
-      console.log("reader", reader);
 
-      reader.onloadend = () => {
+      reader.onload = () => {
         const [name, extension] = file.name.split(".");
 
         if (reader.result && typeof reader.result === "string") {

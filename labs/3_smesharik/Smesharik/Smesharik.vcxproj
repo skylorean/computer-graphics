@@ -140,7 +140,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseWindow.cpp" />
-    <ClCompile Include="glad.c" />
     <ClCompile Include="GLFWInitializer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pin.cpp" />

@@ -1,39 +1,45 @@
 ﻿#include <GLFW/glfw3.h>
 #include <iostream>
 
-void drawCoordinateAxes()
+struct Axis
 {
-	glColor3f(1.0, 1.0, 1.0); // установить цвет линий
+	float min;
+	float max;
+};
+
+void drawCoordinateAxes(const Axis& xAxis, const Axis& yAxis)
+{
+	glColor3f(1.0, 1.0, 1.0);
 
 	glBegin(GL_LINES);
-	// Ось X
-	glVertex2f(-10.0, 0.0);
-	glVertex2f(10.0, 0.0);
-	// Ось Y
-	glVertex2f(0.0, -10.0);
-	glVertex2f(0.0, 10.0);
+	// X
+	glVertex2f(xAxis.min, 0.0);
+	glVertex2f(xAxis.max, 0.0);
+	// Y
+	glVertex2f(0.0, yAxis.min);
+	glVertex2f(0.0, yAxis.max);
 	glEnd();
 }
 
-void drawParabola(float a, float b, float c)
+void drawParabola(float a, float b, float c, const Axis& xAxis)
 {
-	glColor3f(1.0, 0.0, 0.0); // красный цвет для графика параболы
+	glColor3f(1.0, 0.0, 0.0);
 
 	glBegin(GL_POINTS);
-	for (float x = -10.0; x <= 10.0; x += 0.01)
+	for (float x = xAxis.min; x <= xAxis.max; x += 0.005)
 	{
-		float y = a * x * x + b * x + c; // вычислить значение y для заданного x
-		glVertex2f(x, y); // нарисовать точку с координатами (x, y)
+		float y = a * x * x + b * x + c;
+		glVertex2f(x, y);
 	}
 	glEnd();
 }
 
-void display()
+void display(const Axis& xAxis, const Axis& yAxis)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	drawCoordinateAxes(); // нарисовать оси координат
-	drawParabola(10, 0, 0); // рисовать параболу с уравнением y = 10x^2 - 0x + 0
+	drawCoordinateAxes(xAxis, yAxis);
+	drawParabola(10, 0, 0, xAxis); // y = ax^2 - bx + c
 
 	glFlush();
 }
@@ -44,16 +50,19 @@ int main()
 	GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Parabola", NULL, NULL);
 	glfwMakeContextCurrent(window);
 
+	Axis xAxis = { -10.0, 10.0 };
+	Axis yAxis = { -10.0, 10.0 };
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
+	glOrtho(xAxis.min, xAxis.max, yAxis.min, yAxis.max, -1.0, 1.0);
 
 	while (!glfwWindowShouldClose(window))
 	{
 		glClearColor(0.0, 0.0, 0.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		display();
+		display(xAxis, yAxis);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

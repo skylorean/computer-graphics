@@ -27,10 +27,8 @@ void BaseWindow::Run()
 	glfwMakeContextCurrent(m_window);
 	OnRunStart();
 
-	{
-		auto const size = GetFrameBufferSize();
-		OnResize(size.x, size.y);
-	}
+	auto const size = GetFrameBufferSize();
+	OnResize(size.x, size.y);
 
 	while (!glfwWindowShouldClose(m_window))
 	{

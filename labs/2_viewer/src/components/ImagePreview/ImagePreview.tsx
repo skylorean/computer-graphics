@@ -8,8 +8,6 @@ interface ImagePreviewProps {
 }
 
 const ImagePreview: FC<ImagePreviewProps> = ({ selectedImage }) => {
-  console.log(selectedImage);
-
   const { extension, name, path, resolution } = selectedImage;
   const isExtensionPNG = extension === "png";
 
@@ -18,6 +16,7 @@ const ImagePreview: FC<ImagePreviewProps> = ({ selectedImage }) => {
       <div className={styles["image-container"]}>
         <div className={styles["image-wrapper"]}>
           <img src={path} alt="selected" className={styles.image} />
+
           {isExtensionPNG && (
             <img src={pngBackground} className={styles["aplha-layer"]} />
           )}

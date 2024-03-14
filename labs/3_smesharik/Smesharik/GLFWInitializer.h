@@ -2,7 +2,7 @@
 
 #include "common_inc.h"
 
-class GLFWInitializer final
+class GLFWInitializer
 {
 public:
 	GLFWInitializer();
