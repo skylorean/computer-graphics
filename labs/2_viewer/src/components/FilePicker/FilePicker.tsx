@@ -28,10 +28,8 @@ const FilePicker: FC<FilePickerProps> = ({ onChange }) => {
             reader.result.startsWith("data:image/jpeg") ||
             reader.result.startsWith("data:image/bmp")
           ) {
-            // Файл соответствует требуемым типам
             onChange(e.target.files);
           } else {
-            // Файл не соответствует требуемым типам
             alert("Пожалуйста, выберите файл PNG, JPEG или BMP.");
           }
         }

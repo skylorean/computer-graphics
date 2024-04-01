@@ -13,7 +13,7 @@ void Window::OnResize(int width, int height)
 	double aspectRatio = double(width) / double(height);
 
 	glMatrixMode(GL_PROJECTION);
-	auto const proj = glm::perspective(FIELD_OF_VIEW, aspectRatio, Z_NEAR, Z_FAR);
+	auto const proj = glm::perspective(FIELD_OF_VIEW, aspectRatio, Z_NEAR, Z_FAR); // отличие ортографическое проекции от перспективной проекции
 	glLoadMatrixd(&proj[0][0]);
 	glMatrixMode(GL_MODELVIEW);
 }
