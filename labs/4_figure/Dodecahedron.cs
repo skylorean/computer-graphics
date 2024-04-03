@@ -8,41 +8,46 @@ namespace figure
         private static readonly double RATIO = 2 / (1 + Math.Sqrt(5));
         private static readonly double[][] VERTICES =
         [
-            [1, 1, 1],
-            [+1, +1, -1],
-            [+1, -1, +1],
-            [+1, -1, -1],
-            [-1, +1, +1],
-            [-1, +1, -1],
-            [-1, -1, +1],
-            [-1, -1, -1],
-            [0, +(1 - RATIO * RATIO), +(1 + RATIO)],
-            [0, +(1 - RATIO * RATIO), -(1 + RATIO)],
-            [0, -(1 - RATIO * RATIO), +(1 + RATIO)],
-            [0, -(1 - RATIO * RATIO), -(1 + RATIO)],
-            [+(1 - RATIO * RATIO), +(1 + RATIO), 0],
-            [+(1 - RATIO * RATIO), -(1 + RATIO), 0],
-            [-(1 - RATIO * RATIO), +(1 + RATIO), 0],
-            [-(1 - RATIO * RATIO), -(1 + RATIO), 0],
-            [+(1 + RATIO), 0, +(1 - RATIO * RATIO)],
-            [+(1 + RATIO), 0, -(1 - RATIO * RATIO)],
-            [-(1 + RATIO), 0, +(1 - RATIO * RATIO)],
-            [-(1 + RATIO), 0, -(1 - RATIO * RATIO)],
+            [1, 1, 1], // 0
+            [1, -1, 1], // 1
+
+            [-1, -1, 1],//2
+            [-1, 1, 1],// 4 
+            [-1, 1, -1],// 3
+
+            [1, 1, -1], // 5
+            [1, -1, -1],// 6
+            [-1, -1, -1],// 7
+
+            [0, +(1 - RATIO * RATIO), +(1 + RATIO)],// 8
+            [0, +(1 - RATIO * RATIO), -(1 + RATIO)],// 9
+            [0, -(1 - RATIO * RATIO), +(1 + RATIO)],// 10
+            [0, -(1 - RATIO * RATIO), -(1 + RATIO)],// 11
+
+            [+(1 - RATIO * RATIO), +(1 + RATIO), 0],// 12
+            [+(1 - RATIO * RATIO), -(1 + RATIO), 0],// 13
+            [-(1 - RATIO * RATIO), +(1 + RATIO), 0],// 14
+            [-(1 - RATIO * RATIO), -(1 + RATIO), 0],// 15
+
+            [+(1 + RATIO), 0, +(1 - RATIO * RATIO)],// 16
+            [+(1 + RATIO), 0, -(1 - RATIO * RATIO)],// 17
+            [-(1 + RATIO), 0, +(1 - RATIO * RATIO)],// 18
+            [-(1 + RATIO), 0, -(1 - RATIO * RATIO)],// 19
         ];
         private static readonly int[][] FACES =
         [
-            [8, 10, 2, 16, 0],
-            [12, 14, 4, 8, 0],
-            [16, 17, 1, 12, 0],
-            [17, 3, 11, 9, 1],
-            [9, 5, 14, 12, 1],
-            [10, 6, 15, 13, 2],
-            [13, 3, 17, 16, 2],
-            [13, 15, 7, 11, 3],
-            [18, 6, 10, 8, 4],
-            [14, 5, 19, 18, 4],
-            [9, 11, 7, 19, 5],
-            [6, 18, 19, 7, 15]
+            [8, 10, 1, 16, 0],
+            [12, 14, 3, 8, 0],
+            [16, 17, 5, 12, 0],
+            [17, 6, 11, 9, 5],
+            [9, 4, 14, 12, 5],
+            [10, 2, 15, 13, 1],
+            [13, 6, 17, 16, 1],
+            [13, 15, 7, 11, 6],
+            [18, 2, 10, 8, 3],
+            [14, 4, 19, 18, 3],
+            [9, 11, 7, 19, 4],
+            [2, 18, 19, 7, 15]
         ];
         private static readonly Color4[] FACES_COLORS =
         [

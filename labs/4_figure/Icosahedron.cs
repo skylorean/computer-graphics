@@ -12,10 +12,12 @@ namespace figure
             [1f, RATIO, 0f],
             [-1f, -RATIO, 0f],
             [1f, -RATIO, 0f],
+
             [0f, -1f, RATIO],
             [0f, 1f, RATIO],
             [0f, -1f, -RATIO],
             [0f, 1f, -RATIO],
+
             [RATIO, 0f, -1f],
             [RATIO, 0f, 1f],
             [-RATIO, 0f, -1f],
@@ -28,16 +30,19 @@ namespace figure
             [8, 6, 7],
             [7, 1, 8],
             [1, 5, 9],
+
             [0, 11, 5],
             [3, 8, 9],
             [9, 8, 1],
             [10, 7, 6],
             [0, 10, 11],
+
             [0, 1, 7],
             [3, 2, 6],
             [0, 7, 10],
             [3, 9, 4],
             [6, 2, 10],
+
             [3, 6, 8],
             [0, 5, 1],
             [5, 11, 4],
@@ -89,7 +94,7 @@ namespace figure
 
         public void Draw()
         {
-            DrawLines();
+            //DrawLines();
 
             GL.Enable(EnableCap.CullFace);
 

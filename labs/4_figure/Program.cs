@@ -17,7 +17,8 @@ namespace figure
             };
 
             //IShape shape = new Icosahedron();
-            IShape shape = new Dodecahedron();
+            //IShape shape = new Dodecahedron();
+            IShape shape = new StelladDodecahedron();
 
             Window window = new Window(shape, GameWindowSettings.Default, nativeWindowSettings);
             window.Run();

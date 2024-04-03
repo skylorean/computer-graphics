@@ -10,7 +10,7 @@ namespace torus
         {
             NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
             {
-                ClientSize = new Vector2i(500, 500),
+                ClientSize = new Vector2i(1280, 768),
                 Title = "Lab 4 - Torus",
                 Profile = ContextProfile.Compatability,
                 Flags = ContextFlags.Default

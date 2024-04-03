@@ -42,7 +42,7 @@ namespace figure
             GL.Frustum(
                 -frustumWidth * 0.5, frustumWidth * 0.5, // left, right
                 -frustumHeight * 0.5, frustumHeight * 0.5, // top, bottom
-                frustumSize * 0.5, frustumSize * 30 // znear, zfar
+                frustumSize * 0.5, frustumSize * 10 // znear, zfar
                 );
         }
 
@@ -98,12 +98,12 @@ namespace figure
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.AlphaTest);
 
-            GL.Enable(EnableCap.Lighting);
 
-            GL.Light(LightName.Light1, LightParameter.Position, new Vector4(0f, 5f, 0f, 0f));
+            GL.Light(LightName.Light1, LightParameter.Position, new Vector4(0f, 10f, 0f, 0f));
             GL.Light(LightName.Light1, LightParameter.Ambient, new Vector4(0.2f, 0.2f, 0.2f, 1f));
             GL.Light(LightName.Light1, LightParameter.Diffuse, new Vector4(1f, 1f, 1f, 1f));
             GL.Light(LightName.Light1, LightParameter.Specular, new Vector4(0f, 0f, 0f, 1f));
+            GL.Enable(EnableCap.Lighting);
             GL.Enable(EnableCap.Light1);
 
             GL.Enable(EnableCap.ColorMaterial);
@@ -116,7 +116,7 @@ namespace figure
             GL.Material(MaterialFace.Front, MaterialParameter.Specular, new Vector4(1f, 1f, 1f, 1));
             GL.Material(MaterialFace.Front, MaterialParameter.Shininess, 1f);
 
-            GL.Translate(0f, 0f, -5f);
+            GL.Translate(0f, 0f, -10f);
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
