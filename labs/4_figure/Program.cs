@@ -11,14 +11,12 @@ namespace figure
             NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
             {
                 ClientSize = new Vector2i(1200, 768),
-                Title = "Lab 4 - Shape",
+                Title = "Lab 4 - GreatStellatedDodecahedron",
                 Profile = ContextProfile.Compatability,
                 Flags = ContextFlags.Default,
             };
 
-            //IShape shape = new Icosahedron();
-            //IShape shape = new Dodecahedron();
-            IShape shape = new StelladDodecahedron();
+            IShape shape = new GreatStellatedDodecahedron();
 
             Window window = new Window(shape, GameWindowSettings.Default, nativeWindowSettings);
             window.Run();
