@@ -11,20 +11,13 @@ namespace figure
             NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
             {
                 ClientSize = new Vector2i(1200, 768),
-                //Location = new Vector2i(30, 30),
-                //WindowBorder = WindowBorder.Resizable,
-                //WindowState = WindowState.Normal,
                 Title = "Lab 4 - Shape",
-                //APIVersion = new Version(3, 3),
-                //API = ContextAPI.OpenGL,
-                //NumberOfSamples = 0,
                 Profile = ContextProfile.Compatability,
                 Flags = ContextFlags.Default,
             };
 
-            IShape shape = new Dodecahedron();
             //IShape shape = new Icosahedron();
-            //IShape shape = new StarDodecahedron();
+            IShape shape = new Dodecahedron();
 
             Window window = new Window(shape, GameWindowSettings.Default, nativeWindowSettings);
             window.Run();

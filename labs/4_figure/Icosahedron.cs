@@ -5,25 +5,23 @@ namespace figure
 {
     public class Icosahedron : IShape
     {
-        private static readonly float _t = (float)((1.0f + Math.Sqrt(5.0f)) / 2.0f);
-
-        private readonly float[][] _vertices =
+        private static readonly float RATIO = (float)((1.0f + Math.Sqrt(5.0f)) / 2.0f);
+        private static readonly float[][] VERTICES =
         [
-            [-1f, _t, 0f],
-            [1f, _t, 0f],
-            [-1f, -_t, 0f],
-            [1f, -_t, 0f],
-            [0f, -1f, _t],
-            [0f, 1f, _t],
-            [0f, -1f, -_t],
-            [0f, 1f, -_t],
-            [_t, 0f, -1f],
-            [_t, 0f, 1f],
-            [-_t, 0f, -1f],
-            [-_t, 0f, 1f]
+            [-1f, RATIO, 0f],
+            [1f, RATIO, 0f],
+            [-1f, -RATIO, 0f],
+            [1f, -RATIO, 0f],
+            [0f, -1f, RATIO],
+            [0f, 1f, RATIO],
+            [0f, -1f, -RATIO],
+            [0f, 1f, -RATIO],
+            [RATIO, 0f, -1f],
+            [RATIO, 0f, 1f],
+            [-RATIO, 0f, -1f],
+            [-RATIO, 0f, 1f]
         ];
-
-        private readonly int[][] _sides =
+        private static readonly int[][] FACES =
         [
             [11, 10, 2],
             [3, 4, 2],
@@ -46,8 +44,7 @@ namespace figure
             [2, 4, 11],
             [4, 9, 5],
         ];
-
-        private readonly int[][] _lines =
+        private static readonly int[][] LINES =
         [
             [0, 11],
             [0, 5],
@@ -81,9 +78,7 @@ namespace figure
             [6, 8],
             [8, 9],
         ];
-
-
-        private readonly Color4[] _sidesColors =
+        private static readonly Color4[] FACE_COLORS =
         [
             Color4.AliceBlue,
             Color4.Coral,
@@ -112,52 +107,48 @@ namespace figure
         private void DrawLines()
         {
             GL.Color4(0f, 0f, 0f, 1f);
+            GL.LineWidth(3);
 
             GL.Begin(PrimitiveType.Lines);
 
-            foreach (var line in _lines)
+            foreach (var line in LINES)
             {
                 foreach (var vertexIndex in line)
                 {
-                    GL.Vertex3(_vertices[vertexIndex]);
+                    GL.Vertex3(VERTICES[vertexIndex]);
                 }
             }
 
             GL.End();
         }
 
-        // Colors
         private void DrawSides()
         {
             GL.Begin(PrimitiveType.Triangles);
 
             GL.GetFloat(GetPName.ModelviewMatrix, out Matrix4 matrix);
 
-            for (int i = 0; i < _sides.Length; i++)
+            for (int i = 0; i < FACES.Length; i++)
             {
-                var color = _sidesColors[i % _sidesColors.Length];
+                var color = FACE_COLORS[i % FACE_COLORS.Length];
                 color.A = 0.8f;
                 GL.Color4(color);
-                var side = _sides[i];
+                var side = FACES[i];
 
-                var arV0 = _vertices[side[0]];
-                var arV1 = _vertices[side[1]];
-                var arV2 = _vertices[side[2]];
+                var arV0 = VERTICES[side[0]];
+                var arV1 = VERTICES[side[1]];
+                var arV2 = VERTICES[side[2]];
 
                 Vector3 v0 = new Vector3(arV0[0], arV0[1], arV0[2]);
                 Vector3 v1 = new Vector3(arV1[0], arV1[1], arV1[2]);
                 Vector3 v2 = new Vector3(arV2[0], arV2[1], arV2[2]);
 
-                var normal = Vector3.Cross(
-                    v1 - v0,
-                    v2 - v0);
-
-                normal.Normalize();
+                var normal = Vector3.Cross(v1 - v0, v2 - v0).Normalized();
                 GL.Normal3(normal);
 
                 foreach (var vertexIndex in side)
                 {
-                    GL.Vertex3(_vertices[vertexIndex]);
+                    GL.Vertex3(VERTICES[vertexIndex]);
                 }
             }
 
