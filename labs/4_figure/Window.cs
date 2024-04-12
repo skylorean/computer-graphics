@@ -28,11 +28,21 @@ namespace figure
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
 
+            // Вычисляем соотношение сторон клиентской области окна
             double aspectRatio = width / height;
+            // Размер видимого объема, которые должен поместиться в порт просмотра
             double frustumSize = 2;
+
+            // Считаем, что высота видимой области равна FRUSTUM_SIZE
+            // (на расстоянии до ближней плоскости отсечения)
             double frustumHeight = frustumSize;
+
+            // Ширина видимой области рассчитывается согласно соотношению сторон окна
+            // (шире окно - шире область видимости и наоборот)
             double frustumWidth = frustumHeight * aspectRatio;
 
+            // Если ширина видимой области получилась меньше, чем FRUSTUM_SIZE,
+            // то корректируем размеры видимой области
             if (frustumWidth < frustumSize && (aspectRatio != 0))
             {
                 frustumWidth = frustumSize;
@@ -48,8 +58,12 @@ namespace figure
 
         private void NormalizeModelViewMatrix()
         {
-            // Ортонормирование - нормирование и ортогонализация -> нормализация axis & векторное произведение
-
+            /*
+            Ортонормирование - приведение координатных осей к единичной длине (нормирование)
+            и взаимной перпендикулярности (ортогонализация)
+            Достичь этого можно при помощи нормализации координатных осей
+            и векторного произведения
+            */
             Matrix4 modelView;
             GL.GetFloat(GetPName.ModelviewMatrix, out modelView);
 
@@ -57,35 +71,46 @@ namespace figure
             xAxis.Normalize();
             Vector3 yAxis = new Vector3(modelView[0, 1], modelView[1, 1], modelView[2, 1]);
             yAxis.Normalize();
-            Vector3 zAxis = new Vector3(modelView[0, 2], modelView[1, 2], modelView[2, 2]);
+
+            // Ось Z вычисляем через векторное произведение X и Y
+            // Z будет перпендикулярна плоскости векторов X и Y
+            Vector3 zAxis = Vector3.Cross(xAxis, yAxis);
+            // И иметь единичную длину
             zAxis.Normalize();
 
-            // То же самое проделываем с осями x и y
             xAxis = Vector3.Cross(yAxis, zAxis);
             xAxis.Normalize();
             yAxis = Vector3.Cross(zAxis, xAxis);
             yAxis.Normalize();
 
-            // Сохраняем вектора координатных осей обратно в массив
             modelView[0, 0] = xAxis.X; modelView[1, 0] = xAxis.Y; modelView[2, 0] = xAxis.Z;
             modelView[0, 1] = yAxis.X; modelView[1, 1] = yAxis.Y; modelView[2, 1] = yAxis.Z;
             modelView[0, 2] = zAxis.X; modelView[1, 2] = zAxis.Y; modelView[2, 2] = zAxis.Z;
 
-            // Загружаем матрицу моделирования-вида
             GL.LoadMatrix(ref modelView);
         }
 
         private void RotateCamera(float x, float y)
         {
             GL.MatrixMode(MatrixMode.Modelview);
-
+            // Извлекаем текущее значение матрицы моделирования-вида
             GL.GetFloat(GetPName.ModelviewMatrix, out Matrix4 modelView);
 
+            // Извлекаем направления координатных осей камеры в 3д пространстве
+            // как коэффициенты строк матрицы моделирования-вида
+
+            // TODO: разобраться почему берем строки матриц. почему нельзя просто провернуть объект вокруг оси 0 0 и 0 1 0
             Vector3 xAxis = new Vector3(modelView[0, 0], modelView[1, 0], modelView[2, 0]);
             Vector3 yAxis = new Vector3(modelView[0, 1], modelView[1, 1], modelView[2, 1]);
 
+            // Поворачиваем вокруг осей x и y камеры
             GL.Rotate(x, xAxis);
             GL.Rotate(y, yAxis);
+
+            // В ходе умножения матриц могут возникать погрешности, которые,
+            // накапливаясь могут сильно искажать картинку
+            // Для их компенсации после каждой модификации матрицы моделирования-вида
+            // проводим ее ортонормирование
             NormalizeModelViewMatrix();
         }
 
@@ -98,7 +123,6 @@ namespace figure
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.AlphaTest);
 
-
             GL.Light(LightName.Light1, LightParameter.Position, new Vector4(0f, 10f, 0f, 0f));
             GL.Light(LightName.Light1, LightParameter.Ambient, new Vector4(0.2f, 0.2f, 0.2f, 1f));
             GL.Light(LightName.Light1, LightParameter.Diffuse, new Vector4(1f, 1f, 1f, 1f));
@@ -106,11 +130,11 @@ namespace figure
             GL.Enable(EnableCap.Lighting);
             GL.Enable(EnableCap.Light1);
 
-            GL.Enable(EnableCap.ColorMaterial);
-
             GL.Enable(EnableCap.Blend);
+            // как работает освещение объекта
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
+            GL.Enable(EnableCap.ColorMaterial);
             GL.Material(MaterialFace.Front, MaterialParameter.Diffuse, new Vector4(1f, 1f, 1f, 1f));
             GL.Material(MaterialFace.Front, MaterialParameter.Ambient, new Vector4(0.2f, 0.2f, 0.2f, 1f));
             GL.Material(MaterialFace.Front, MaterialParameter.Specular, new Vector4(1f, 1f, 1f, 1));
@@ -129,7 +153,6 @@ namespace figure
                 _mouseY = MousePosition.Y;
             }
 
-
             base.OnMouseDown(e);
         }
 
@@ -140,7 +163,7 @@ namespace figure
                 return;
             }
 
-            // Смещение курсора мыши
+            // Вычисляем смещение курсора мыши
             float dx = e.X - _mouseX;
             float dy = e.Y - _mouseY;
 
@@ -150,7 +173,7 @@ namespace figure
             float rotateY = dx * 180 / Size.Y;
             RotateCamera(rotateX, rotateY);
 
-            // Текущие координаты мыши
+            // Сохраняем текущие координаты мыши
             _mouseX = e.X;
             _mouseY = e.Y;
 
@@ -173,16 +196,15 @@ namespace figure
 
         protected override void OnResize(ResizeEventArgs e)
         {
+            base.OnResize(e);
+
             int width = e.Width;
             int height = e.Height;
 
             GL.Viewport(0, 0, width, height);
 
             SetupProjectionMatrix(width, height);
-
-
             GL.MatrixMode(MatrixMode.Modelview);
-            base.OnResize(e);
 
             OnRenderFrame(new FrameEventArgs());
         }
@@ -193,8 +215,8 @@ namespace figure
 
             GL.MatrixMode(MatrixMode.Modelview);
 
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-            GL.Clear(ClearBufferMask.DepthBufferBit);
+            // Очищаем буфер цвета и буфер глубины
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             _shape.Draw();
 
@@ -214,30 +236,6 @@ namespace figure
         protected override void OnUnload()
         {
             base.OnUnload();
-        }
-
-        protected override void OnKeyDown(KeyboardKeyEventArgs e)
-        {
-            float rotateCoef = 10.0f;
-
-            if (e.Key == Keys.Left)
-            {
-                RotateCamera(0, -rotateCoef);
-            }
-            if (e.Key == Keys.Right)
-            {
-                RotateCamera(0, rotateCoef);
-            }
-            if (e.Key == Keys.Down)
-            {
-                RotateCamera(rotateCoef, 0);
-            }
-            if (e.Key == Keys.Up)
-            {
-                RotateCamera(-rotateCoef, 0);
-            }
-
-            base.OnKeyDown(e);
         }
     }
 }

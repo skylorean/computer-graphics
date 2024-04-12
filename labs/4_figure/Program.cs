@@ -11,7 +11,7 @@ namespace figure
             NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
             {
                 ClientSize = new Vector2i(1200, 768),
-                Title = "Lab 4 - GreatStellatedDodecahedron",
+                Title = "Lab 4 - Great Stellated Dodecahedron",
                 Profile = ContextProfile.Compatability,
                 Flags = ContextFlags.Default,
             };

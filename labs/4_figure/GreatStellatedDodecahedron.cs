@@ -30,6 +30,7 @@ namespace figure
             [RATIO_2, -RATIO_2, RATIO_2],
             [-RATIO_2, -RATIO_2, RATIO_2],
             [-RATIO_2, RATIO_2, RATIO_2],
+
             [-RATIO_2, RATIO_2, -RATIO_2],
             [RATIO_2, RATIO_2, -RATIO_2],
             [RATIO_2, -RATIO_2, -RATIO_2],
@@ -157,53 +158,37 @@ namespace figure
             [29, 3, 6],
 
         ];
-        private static readonly Color4[] ICOSAHENDRON_FACES_COLORS =
+        private static readonly Color4[] FACES_COLORS =
         [
-            Color4.Orange,
-            Color4.Magenta,
-            //Color4.Cyan,
-            //Color4.LightGreen,
-            //Color4.DarkRed
-            //Color4.Red
+            new Color4(255, 0, 0, 180),
+            new Color4(0, 0, 255, 180),
         ];
-        private static readonly Color4[] STELLA_FACES_COLORS =
-        [
-            //Color4.Coral,
-            //Color4.BlueViolet,
-            Color4.Red,
-            Color4.Blue
-        ];
-        private static readonly float FACE_COLOR_APLHA = 0.8f;
 
         public void Draw()
+
+        // Как opengl определяет лицевая грань видна сейчас, или нелицевая. И как описывать объекты, чтобы opengl корректно отрисовал их
         {
-            DrawVertices(ref VERTICES);
+            //DrawVertices();
             DrawLines();
 
             GL.Enable(EnableCap.CullFace);
 
             // Отбраковка ближних граней
             GL.CullFace(CullFaceMode.Front);
-            DrawFaces(GetModifiedAplhaColors(STELLA_FACES_COLORS, FACE_COLOR_APLHA));
-
+            DrawFaces(FACES_COLORS);
             // Отбраковка дальних граней
             GL.CullFace(CullFaceMode.Back);
-            DrawFaces(GetModifiedAplhaColors(STELLA_FACES_COLORS, FACE_COLOR_APLHA));
+            DrawFaces(FACES_COLORS);
 
             GL.Disable(EnableCap.CullFace);
         }
 
-        private Color4[] GetModifiedAplhaColors(Color4[] colors, float newAplha)
-        {
-            return colors.Select(c => { c.A = newAplha; return c; }).ToArray();
-        }
-
-        private void DrawVertices(ref double[][] vertices)
+        private void DrawVertices()
         {
             GL.PointSize(10);
             GL.Color4(0f, 0f, 0f, 1f);
 
-            foreach (var vertex in vertices)
+            foreach (var vertex in VERTICES)
             {
                 GL.Begin(PrimitiveType.Points);
                 GL.Vertex3(vertex[0], vertex[1], vertex[2]);
