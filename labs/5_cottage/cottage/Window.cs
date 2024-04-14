@@ -9,7 +9,6 @@ namespace cottage
 {
     internal class Window : GameWindow
     {
-
         private bool _leftButtonPressed = false;
         private float _mouseX = 0;
         private float _mouseY = 0;
@@ -37,34 +36,17 @@ namespace cottage
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             GL.Enable(EnableCap.Lighting);
-
-            //освещение в renderFrame
-
-            //освещение домика
             GL.Light(LightName.Light2, LightParameter.Position, new Vector4(1f, 1f, 1f, 0f));
             GL.Light(LightName.Light2, LightParameter.Diffuse, new Vector4(1f, 1f, 1f, 1f));
             GL.Light(LightName.Light2, LightParameter.Ambient, new Vector4(0.2f, 0.2f, 0.2f, 1f));
             GL.Light(LightName.Light2, LightParameter.Specular, new Vector4(1f, 1f, 1f, 1f));
             GL.Enable(EnableCap.Light2);
 
-            //освещение неба
-            GL.Light(LightName.Light1, LightParameter.Position, new Vector4(0f, 0f, 1f, 0f));
-            GL.Light(LightName.Light1, LightParameter.Diffuse, new Vector4(1f, 1f, 1f, 1f));
-            GL.Light(LightName.Light1, LightParameter.Ambient, new Vector4(0.2f, 0.2f, 0.2f, 1f));
-            GL.Light(LightName.Light1, LightParameter.Specular, new Vector4(1f, 1f, 1f, 1f));
-            GL.Light(LightName.Light0, LightParameter.Position, new Vector4(-1f, -1f, -1f, 0f));
-            GL.Light(LightName.Light0, LightParameter.Diffuse, new Vector4(1f, 1f, 1f, 1f));
-            GL.Light(LightName.Light0, LightParameter.Ambient, new Vector4(0.2f, 0.2f, 0.2f, 1f));
-            GL.Light(LightName.Light0, LightParameter.Specular, new Vector4(1f, 1f, 1f, 1f));
-
-
             GL.Enable(EnableCap.ColorMaterial);
-
             GL.Material(MaterialFace.Front, MaterialParameter.Diffuse, new Vector4(0.8f, 0.8f, 0f, 1f));
             GL.Material(MaterialFace.Front, MaterialParameter.Ambient, new Vector4(0.2f, 0.2f, 0.2f, 1));
             GL.Material(MaterialFace.Front, MaterialParameter.Specular, new Vector4(0.7f, 0.7f, 0.7f, 1));
             GL.Material(MaterialFace.Front, MaterialParameter.Shininess, 100);
-
 
             GL.LoadIdentity();
             var matrix = Matrix4.LookAt(
@@ -85,7 +67,6 @@ namespace cottage
                 _mouseX = MousePosition.X;
                 _mouseY = MousePosition.Y;
             }
-
 
             base.OnMouseDown(e);
         }
@@ -148,7 +129,6 @@ namespace cottage
 
             GL.LoadMatrix(ref modelView);
         }
-
 
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
@@ -226,15 +206,6 @@ namespace cottage
         protected override void OnUnload()
         {
             base.OnUnload();
-        }
-
-        protected override void OnKeyDown(KeyboardKeyEventArgs e)
-        {
-            if (e.Key == Keys.Space)
-            {
-                _cottage.ShowFog = !_cottage.ShowFog;
-            }
-            base.OnKeyDown(e);
         }
     }
 }

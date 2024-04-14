@@ -1,26 +1,12 @@
 ﻿using OpenTK.Graphics.OpenGL;
 
-
 namespace cottage
 {
-    internal class Cottage
+    public class Cottage
     {
-        public Cottage()
-        {
-            house.WallTexture = brickWallTexture;
-            house.DoorTexture = doorTexture;
-            house.RootTexture = rootTilesTexture;
-            house.WindowTexture = windowTexture;
-            house.AtticBoardsTexture = atticBoardsTexture;
-
-            garage.WallTexture = brickWallTexture;
-            garage.GarageDoorTexture = garageDoorTexture;
-            garage.RootTexture = rootTilesTexture;
-            garage.WindowTexture = windowTexture;
-            garage.AtticBoardsTexture = atticBoardsTexture;
-
-            yard.GrassTexture = grassTexture;
-        }
+        private readonly Yard _yard = new();
+        private readonly House _house = new();
+        private readonly Garage _garage = new();
 
         static Texture texture = new Texture();
         private int brickWallTexture = texture.LoadTexture(
@@ -59,43 +45,27 @@ namespace cottage
             TextureMinFilter.Linear,
             TextureWrapMode.Repeat,
             TextureWrapMode.Repeat);
-        private int atticBoardsTexture = texture.LoadTexture(
-            "images/brick-wall.jpg",
-            TextureMagFilter.Linear,
-            TextureMinFilter.Linear,
-            TextureWrapMode.Repeat,
-            TextureWrapMode.Repeat);
 
-        House house = new();
-        Garage garage = new();
-        Yard yard = new();
+        public Cottage()
+        {
+            _yard.GrassTexture = grassTexture;
 
-        public bool ShowFog = false;
+            _house.WallTexture = brickWallTexture;
+            _house.DoorTexture = doorTexture;
+            _house.RoofTexture = rootTilesTexture;
+            _house.WindowTexture = windowTexture;
+
+            _garage.WallTexture = brickWallTexture;
+            _garage.GarageDoorTexture = garageDoorTexture;
+            _garage.RoofTexture = rootTilesTexture;
+            _garage.WindowTexture = windowTexture;
+        }
 
         public void Draw()
         {
-            if (ShowFog)
-            {
-                GL.Enable(EnableCap.Fog);
-            }
-            else
-            {
-                GL.Disable(EnableCap.Fog);
-            }
-
-            // Задаем режим тумана
-            GL.Fog(FogParameter.FogMode, (int)FogMode.Exp2);
-
-            // Задаем цвет тумана
-            GL.Fog(FogParameter.FogColor, new float[] { 0.5f, 0.5f, 0.5f, 0f });
-
-            // и его плотность
-            GL.Fog(FogParameter.FogDensity, 0.015f);
-
-            house.Draw();
-            garage.Draw();
-            yard.Draw();
-            GL.Disable(EnableCap.Fog);
+            _yard.Draw();
+            _house.Draw();
+            _garage.Draw();
 
             GL.Enable(EnableCap.Light0);
             GL.Enable(EnableCap.Light1);
