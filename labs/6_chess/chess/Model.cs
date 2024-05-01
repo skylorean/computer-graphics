@@ -18,7 +18,7 @@ namespace chess
                 PostProcessSteps.FlipUVs);
             importer.Dispose();
 
-            LoadTexturesAndMaterials();
+            LoadTextures();
             CreateDisplayLists();
         }
 
@@ -62,7 +62,7 @@ namespace chess
             }
         }
 
-        private void LoadTexturesAndMaterials()
+        private void LoadTextures()
         {
             int meshCount = scene.MeshCount;
             materialLoader = new MaterialLoader();

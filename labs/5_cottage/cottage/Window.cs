@@ -32,9 +32,6 @@ namespace cottage
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.AlphaTest);
 
-            GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-
             GL.Enable(EnableCap.Lighting);
             GL.Light(LightName.Light2, LightParameter.Position, new Vector4(1f, 1f, 1f, 0f));
             GL.Light(LightName.Light2, LightParameter.Diffuse, new Vector4(1f, 1f, 1f, 1f));
@@ -104,6 +101,7 @@ namespace cottage
 
             GL.Rotate(x, xAxis);
             GL.Rotate(y, yAxis);
+            // что значит нормализовать матрицу
             NormalizeModelViewMatrix();
         }
 
@@ -201,11 +199,6 @@ namespace cottage
             {
                 Close();
             }
-        }
-
-        protected override void OnUnload()
-        {
-            base.OnUnload();
         }
     }
 }

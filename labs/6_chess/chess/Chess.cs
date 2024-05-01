@@ -13,10 +13,13 @@ namespace chess
         private readonly Model _pawn;
         private readonly Model _board;
 
-        private readonly float CELL_SIZE = 40f;
+        private readonly float CELL_SIZE = 80f;
 
         public Chess()
         {
+            _board = new Model(); ;
+            _board.LoadModel("models/ChessBoard.obj");
+
             _rook = new Model();
             _rook.LoadModel("models/Rook.obj");
 
@@ -34,9 +37,6 @@ namespace chess
 
             _pawn = new Model();
             _pawn.LoadModel("models/Pawn.obj");
-
-            _board = new Model(); ;
-            _board.LoadModel("models/ChessBoard.obj");
         }
 
         public void Draw()

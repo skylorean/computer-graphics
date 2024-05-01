@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 
 namespace cottage
 {
+    // TODO: разобраться про фильтрацию текстур. Сделать на траве размытую текстуру
     public class House
     {
         public int WallTexture { get; set; }
@@ -52,7 +53,8 @@ namespace cottage
         private void DrawMainHouse()
         {
             DrawHouseBox(MainWallCoords, MainWallTextureCoords);
-            DrawHouseRoof(MainRoofCoords, MainRoofTextureCoords, MainWallCoords, MainWallTextureCoords);
+            DrawHouseRightSideRoof(MainRoofCoords, MainRoofTextureCoords, MainWallCoords, MainWallTextureCoords);
+            DrawHouseLeftSideRoof(MainRoofCoords, MainRoofTextureCoords, MainWallCoords, MainWallTextureCoords);
             DrawHouseWindows(MainWindowsCoords, MainWindowTextureCoords, MainWallCoords);
             DrawHouseDoor(MainDoorCoords, MainDoorTextureCoords);
         }
@@ -60,42 +62,59 @@ namespace cottage
         private void DrawExtraHouse()
         {
             DrawHouseBox(ExtraWallCoords, ExtraWallTextureCoords);
-            DrawHouseRoof(ExtraRoofCoords, ExtraRoofTextureCoords, ExtraWallCoords, ExtraWallTextureCoords);
+            // TODO: починить крышу
+            DrawHouseLeftSideRoof(ExtraRoofCoords, ExtraRoofTextureCoords, ExtraWallCoords, ExtraWallTextureCoords);
             DrawHouseWindows(ExtraWindowsCoords, ExtraWindowTextureCoords, ExtraWallCoords);
             DrawHouseDoor(ExtraDoorCoords, ExtraDoorTextureCoords);
         }
 
         private void DrawHouseBox(Box3 wallCoords, Box2 wallTextureCoords)
         {
-            GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, WallTexture);
+            // TODO:Разобраться в boiler plate для манипуляции с текстурами
 
-            GL.ActiveTexture(TextureUnit.Texture1);
+            /*
+             * Устанавливает активный текстурный юнит 0. 
+             * Это означает, что следующие операции связанные 
+             * с текстурами будут применяться к текстуре, 
+             * связанной с текстурным объектом, связанным с текстурным юнитом 0.
+             */
+            GL.ActiveTexture(TextureUnit.Texture0);
+
+            /*
+             * Включает 2D текстурирование для текстурного юнита. 
+             * Это означает, что текстуры будут применяться к геометрии 
+             * в соответствии с их координатами текстуры.
+             */
             GL.Enable(EnableCap.Texture2D);
-            GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)All.Decal);
+
+            /*
+             * Привязывает текстуру WallTexture к текущему целевому объекту текстуры.
+             * Сейчас будем работать именно с WallTexture
+             */
+            GL.BindTexture(TextureTarget.Texture2D, WallTexture);
 
             GL.Begin(PrimitiveType.Quads);
 
             // Back Side Wall
             GL.Normal3(0f, 0f, -1f);
-            GL.MultiTexCoord2(TextureUnit.Texture0, wallTextureCoords.Min.X, wallTextureCoords.Min.Y);
+            GL.TexCoord2(wallTextureCoords.Min.X, wallTextureCoords.Min.Y);
             GL.Vertex3(wallCoords.Min.X, wallCoords.Max.Y, wallCoords.Min.Z);
-            GL.MultiTexCoord2(TextureUnit.Texture0, wallTextureCoords.Min.X, wallTextureCoords.Max.Y);
+            GL.TexCoord2(wallTextureCoords.Min.X, wallTextureCoords.Max.Y);
             GL.Vertex3(wallCoords.Min.X, wallCoords.Min.Y, wallCoords.Min.Z);
-            GL.MultiTexCoord2(TextureUnit.Texture0, wallTextureCoords.Max.X, wallTextureCoords.Max.Y);
+            GL.TexCoord2(wallTextureCoords.Max.X, wallTextureCoords.Max.Y);
             GL.Vertex3(wallCoords.Max.X, wallCoords.Min.Y, wallCoords.Min.Z);
-            GL.MultiTexCoord2(TextureUnit.Texture0, wallTextureCoords.Max.X, wallTextureCoords.Min.Y);
+            GL.TexCoord2(wallTextureCoords.Max.X, wallTextureCoords.Min.Y);
             GL.Vertex3(wallCoords.Max.X, wallCoords.Max.Y, wallCoords.Min.Z);
 
             // Left Side Wall
             GL.Normal3(-1f, 0f, 0f);
-            GL.MultiTexCoord2(TextureUnit.Texture0, wallTextureCoords.Max.X, wallTextureCoords.Max.Y);
+            GL.TexCoord2(wallTextureCoords.Max.X, wallTextureCoords.Max.Y);
             GL.Vertex3(wallCoords.Min.X, wallCoords.Min.Y, wallCoords.Min.Z);
-            GL.MultiTexCoord2(TextureUnit.Texture0, wallTextureCoords.Max.X, wallTextureCoords.Min.Y);
+            GL.TexCoord2(wallTextureCoords.Max.X, wallTextureCoords.Min.Y);
             GL.Vertex3(wallCoords.Min.X, wallCoords.Max.Y, wallCoords.Min.Z);
-            GL.MultiTexCoord2(TextureUnit.Texture0, wallTextureCoords.Min.X, wallTextureCoords.Min.Y);
+            GL.TexCoord2(wallTextureCoords.Min.X, wallTextureCoords.Min.Y);
             GL.Vertex3(wallCoords.Min.X, wallCoords.Max.Y, wallCoords.Max.Z);
-            GL.MultiTexCoord2(TextureUnit.Texture0, wallTextureCoords.Min.X, wallTextureCoords.Max.Y);
+            GL.TexCoord2(wallTextureCoords.Min.X, wallTextureCoords.Max.Y);
             GL.Vertex3(wallCoords.Min.X, wallCoords.Min.Y, wallCoords.Max.Z);
 
             // Front Side Wall
@@ -123,14 +142,14 @@ namespace cottage
             GL.End();
         }
 
-        private void DrawHouseRoof(Box3 roofCoords, Box2 roofTextureCoords, Box3 wallCoords, Box2 wallTextureCoords)
+        private void DrawHouseRightSideRoof(Box3 roofCoords, Box2 roofTextureCoords, Box3 wallCoords, Box2 wallTextureCoords)
         {
             GL.ActiveTexture(TextureUnit.Texture0);
+            GL.Enable(EnableCap.Texture2D);
+            GL.BindTexture(TextureTarget.Texture2D, RoofTexture);
 
             // Roof
-            GL.BindTexture(TextureTarget.Texture2D, RoofTexture);
             GL.Begin(PrimitiveType.Quads);
-
             GL.Normal3(1f, 1f, 0f);
             GL.TexCoord2(roofTextureCoords.Max.X, roofTextureCoords.Max.Y);
             GL.Vertex3(roofCoords.Max.X, roofCoords.Min.Y, roofCoords.Max.Z);
@@ -140,22 +159,10 @@ namespace cottage
             GL.Vertex3(roofCoords.Center.X, roofCoords.Max.Y, roofCoords.Min.Z);
             GL.TexCoord2(roofTextureCoords.Max.X, roofTextureCoords.Min.Y);
             GL.Vertex3(roofCoords.Center.X, roofCoords.Max.Y, roofCoords.Max.Z);
-
-            GL.Normal3(-1f, 1f, 0f);
-            GL.TexCoord2(roofTextureCoords.Max.X, roofTextureCoords.Max.Y);
-            GL.Vertex3(roofCoords.Min.X, roofCoords.Min.Y, roofCoords.Max.Z);
-            GL.TexCoord2(roofTextureCoords.Max.X, roofTextureCoords.Min.Y);
-            GL.Vertex3(roofCoords.Center.X, roofCoords.Max.Y, roofCoords.Max.Z);
-            GL.TexCoord2(roofTextureCoords.Min.X, roofTextureCoords.Min.Y);
-            GL.Vertex3(roofCoords.Center.X, roofCoords.Max.Y, roofCoords.Min.Z);
-            GL.TexCoord2(roofTextureCoords.Min.X, roofTextureCoords.Max.Y);
-            GL.Vertex3(roofCoords.Min.X, roofCoords.Min.Y, roofCoords.Min.Z);
-
             GL.End();
 
             // Wall-Roof
             GL.Begin(PrimitiveType.Triangles);
-
             GL.Normal3(0f, 0f, 1f);
             GL.TexCoord2(wallTextureCoords.Min.X, wallTextureCoords.Max.Y);
             GL.Vertex3(wallCoords.Min.X, wallCoords.Max.Y, wallCoords.Max.Z);
@@ -171,6 +178,53 @@ namespace cottage
             GL.Vertex3(wallCoords.Min.X, wallCoords.Max.Y, wallCoords.Min.Z);
             GL.TexCoord2(wallTextureCoords.Max.X, wallTextureCoords.Max.Y);
             GL.Vertex3(wallCoords.Max.X, wallCoords.Max.Y, wallCoords.Min.Z);
+
+            GL.TexCoord2(
+                wallTextureCoords.Center.X,
+                0);
+            GL.Vertex3(roofCoords.Center.X, roofCoords.Max.Y, wallCoords.Min.Z);
+            GL.End();
+        }
+
+        private void DrawHouseLeftSideRoof(Box3 roofCoords, Box2 roofTextureCoords, Box3 wallCoords, Box2 wallTextureCoords)
+        {
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.Enable(EnableCap.Texture2D);
+            GL.BindTexture(TextureTarget.Texture2D, RoofTexture);
+
+            // Roof
+            GL.Begin(PrimitiveType.Quads);
+
+            GL.Normal3(-1f, 1f, 0f);
+            GL.TexCoord2(roofTextureCoords.Max.X, roofTextureCoords.Max.Y);
+            GL.Vertex3(roofCoords.Min.X, roofCoords.Min.Y, roofCoords.Max.Z);
+            GL.TexCoord2(roofTextureCoords.Max.X, roofTextureCoords.Min.Y);
+            GL.Vertex3(roofCoords.Center.X, roofCoords.Max.Y, roofCoords.Max.Z);
+            GL.TexCoord2(roofTextureCoords.Min.X, roofTextureCoords.Min.Y);
+            GL.Vertex3(roofCoords.Center.X, roofCoords.Max.Y, roofCoords.Min.Z);
+            GL.TexCoord2(roofTextureCoords.Min.X, roofTextureCoords.Max.Y);
+            GL.Vertex3(roofCoords.Min.X, roofCoords.Min.Y, roofCoords.Min.Z);
+
+            GL.End();
+
+            // Wall-Roof
+            GL.Begin(PrimitiveType.Triangles);
+            GL.Normal3(0f, 0f, 1f);
+            GL.TexCoord2(wallTextureCoords.Min.X, wallTextureCoords.Max.Y);
+            GL.Vertex3(wallCoords.Min.X, wallCoords.Max.Y, wallCoords.Max.Z);
+            GL.TexCoord2(wallTextureCoords.Max.X, wallTextureCoords.Max.Y);
+            GL.Vertex3(wallCoords.Max.X, wallCoords.Max.Y, wallCoords.Max.Z);
+            GL.TexCoord2(
+                wallTextureCoords.Center.X,
+                0);
+            GL.Vertex3(roofCoords.Center.X, roofCoords.Max.Y, wallCoords.Max.Z);
+
+            GL.Normal3(0f, 0f, -1f);
+            GL.TexCoord2(wallTextureCoords.Min.X, wallTextureCoords.Max.Y);
+            GL.Vertex3(wallCoords.Min.X, wallCoords.Max.Y, wallCoords.Min.Z);
+            GL.TexCoord2(wallTextureCoords.Max.X, wallTextureCoords.Max.Y);
+            GL.Vertex3(wallCoords.Max.X, wallCoords.Max.Y, wallCoords.Min.Z);
+
             GL.TexCoord2(
                 wallTextureCoords.Center.X,
                 0);
@@ -181,6 +235,7 @@ namespace cottage
         private void DrawHouseWindows(Box3[] windowCoords, Box2 windowTextureCoords, Box3 wallCoords)
         {
             GL.ActiveTexture(TextureUnit.Texture0);
+            GL.Enable(EnableCap.Texture2D);
             GL.BindTexture(TextureTarget.Texture2D, WindowTexture);
 
             GL.Begin(PrimitiveType.Quads);
@@ -231,6 +286,7 @@ namespace cottage
         private void DrawHouseDoor(Box3 doorCoords, Box2 doorTextureCoords)
         {
             GL.ActiveTexture(TextureUnit.Texture0);
+            GL.Enable(EnableCap.Texture2D);
             GL.BindTexture(TextureTarget.Texture2D, DoorTexture);
 
             GL.Begin(PrimitiveType.Quads);

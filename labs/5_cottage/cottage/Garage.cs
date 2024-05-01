@@ -8,7 +8,6 @@ namespace cottage
         public int WallTexture { get; set; }
         public int GarageDoorTexture { get; set; }
         public int RoofTexture { get; set; }
-        public int GrafityTexture { get; set; }
         public int WindowTexture { get; set; }
 
         public Box2 WallTextureCoord { get; set; } = new(0.5f, 0.5f, 1f, 1f);
@@ -39,29 +38,21 @@ namespace cottage
         private void DrawGarageBox()
         {
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, WallTexture);
-
-            GL.ActiveTexture(TextureUnit.Texture1);
             GL.Enable(EnableCap.Texture2D);
-            GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)All.Decal);
-            GL.BindTexture(TextureTarget.Texture2D, GrafityTexture);
+            GL.BindTexture(TextureTarget.Texture2D, WallTexture);
 
             GL.Begin(PrimitiveType.Quads);
 
             // Back Side Wall
             GL.Normal3(0f, 0f, -1f);
-            GL.MultiTexCoord2(TextureUnit.Texture0, WallTextureCoord.Max.X, WallTextureCoord.Min.Y);
-            GL.MultiTexCoord2(TextureUnit.Texture1, GrafiryTextureCoord.Max.X, GrafiryTextureCoord.Min.Y);
+            GL.TexCoord2(WallTextureCoord.Max.X, WallTextureCoord.Min.Y);
             GL.Vertex3(WallCoords.Min.X, WallCoords.Max.Y, WallCoords.Min.Z);
-            GL.MultiTexCoord2(TextureUnit.Texture0, WallTextureCoord.Max.X, WallTextureCoord.Max.Y);
-            GL.MultiTexCoord2(TextureUnit.Texture1, GrafiryTextureCoord.Max.X, GrafiryTextureCoord.Max.Y);
+            GL.TexCoord2(WallTextureCoord.Max.X, WallTextureCoord.Max.Y);
             GL.Vertex3(WallCoords.Min.X, WallCoords.Min.Y, WallCoords.Min.Z);
-            GL.MultiTexCoord2(TextureUnit.Texture0, WallTextureCoord.Min.X, WallTextureCoord.Max.Y);
-            GL.MultiTexCoord2(TextureUnit.Texture1, GrafiryTextureCoord.Min.X, GrafiryTextureCoord.Max.Y);
+            GL.TexCoord2(WallTextureCoord.Min.X, WallTextureCoord.Max.Y);
             GL.Vertex3(WallCoords.Max.X, WallCoords.Min.Y, WallCoords.Min.Z);
             GL.TexCoord2(WallTextureCoord.Max.Y, WallTextureCoord.Min.Y);
-            GL.MultiTexCoord2(TextureUnit.Texture0, WallTextureCoord.Min.X, WallTextureCoord.Min.Y);
-            GL.MultiTexCoord2(TextureUnit.Texture1, GrafiryTextureCoord.Min.X, GrafiryTextureCoord.Min.Y);
+            GL.TexCoord2(WallTextureCoord.Min.X, WallTextureCoord.Min.Y);
             GL.Vertex3(WallCoords.Max.X, WallCoords.Max.Y, WallCoords.Min.Z);
 
             // Left Side Wall
@@ -104,6 +95,7 @@ namespace cottage
         private void DrawGarageRoof()
         {
             GL.ActiveTexture(TextureUnit.Texture0);
+            GL.Enable(EnableCap.Texture2D);
             GL.BindTexture(TextureTarget.Texture2D, RoofTexture);
             GL.Begin(PrimitiveType.Quads);
 
@@ -118,7 +110,6 @@ namespace cottage
             GL.Vertex3(RootCoords.Min.X, RootCoords.Max.Y, RootCoords.Max.Z);
 
             GL.End();
-
 
             GL.Begin(PrimitiveType.Triangles);
             GL.Normal3(0f, 0f, 1f);
@@ -140,13 +131,12 @@ namespace cottage
                 0);
             GL.Vertex3(RootCoords.Min.X, RootCoords.Max.Y, WallCoords.Min.Z);
             GL.End();
-
-
         }
 
         private void DrawGarageWindows()
         {
             GL.ActiveTexture(TextureUnit.Texture0);
+            GL.Enable(EnableCap.Texture2D);
             GL.BindTexture(TextureTarget.Texture2D, WindowTexture);
 
             GL.Begin(PrimitiveType.Quads);
@@ -198,6 +188,7 @@ namespace cottage
         private void DrawGarageDoor()
         {
             GL.ActiveTexture(TextureUnit.Texture0);
+            GL.Enable(EnableCap.Texture2D);
             GL.BindTexture(TextureTarget.Texture2D, GarageDoorTexture);
 
             GL.Begin(PrimitiveType.Quads);

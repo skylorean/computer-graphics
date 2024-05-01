@@ -8,39 +8,33 @@ namespace cottage
         private readonly House _house = new();
         private readonly Garage _garage = new();
 
-        static Texture texture = new Texture();
-        private int brickWallTexture = texture.LoadTexture(
+        static Texture _texture = new Texture();
+        private int brickWallTexture = _texture.LoadTexture(
             "images/brick-wall.jpg",
             TextureMagFilter.LinearDetailSgis,
             TextureMinFilter.Linear,
             TextureWrapMode.Repeat,
             TextureWrapMode.Repeat);
-        private int doorTexture = texture.LoadTexture(
+        private int doorTexture = _texture.LoadTexture(
             "images/door.jpg",
             TextureMagFilter.Linear,
             TextureMinFilter.Linear,
             TextureWrapMode.Repeat,
             TextureWrapMode.Repeat);
-        private int garageDoorTexture = texture.LoadTexture(
-            "images/garage-door.jpg",
-            TextureMagFilter.Linear,
-            TextureMinFilter.Linear,
-            TextureWrapMode.Repeat,
-            TextureWrapMode.Repeat);
-        private int grassTexture = texture.LoadTexture(
+        private int grassTexture = _texture.LoadTexture(
             "images/grass.jpg",
             TextureMagFilter.Linear,
             TextureMinFilter.Linear,
             TextureWrapMode.Repeat,
             TextureWrapMode.Repeat);
-        private int windowTexture = texture.LoadTexture(
+        private int windowTexture = _texture.LoadTexture(
             "images/window.jpg",
             TextureMagFilter.Linear,
             TextureMinFilter.Linear,
             TextureWrapMode.Repeat,
             TextureWrapMode.Repeat);
-        private int rootTilesTexture = texture.LoadTexture(
-            "images/root-tiles.jpg",
+        private int steelTexture = _texture.LoadTexture(
+            "images/steel.jpg",
             TextureMagFilter.Linear,
             TextureMinFilter.Linear,
             TextureWrapMode.Repeat,
@@ -52,12 +46,12 @@ namespace cottage
 
             _house.WallTexture = brickWallTexture;
             _house.DoorTexture = doorTexture;
-            _house.RoofTexture = rootTilesTexture;
+            _house.RoofTexture = steelTexture;
             _house.WindowTexture = windowTexture;
 
             _garage.WallTexture = brickWallTexture;
-            _garage.GarageDoorTexture = garageDoorTexture;
-            _garage.RoofTexture = rootTilesTexture;
+            _garage.GarageDoorTexture = steelTexture;
+            _garage.RoofTexture = steelTexture;
             _garage.WindowTexture = windowTexture;
         }
 
@@ -66,12 +60,6 @@ namespace cottage
             _yard.Draw();
             _house.Draw();
             _garage.Draw();
-
-            GL.Enable(EnableCap.Light0);
-            GL.Enable(EnableCap.Light1);
-
-            GL.Disable(EnableCap.Light0);
-            GL.Disable(EnableCap.Light1);
         }
     }
 }

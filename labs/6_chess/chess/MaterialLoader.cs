@@ -10,10 +10,12 @@ namespace chess
     public class MaterialLoader
     {
         private int[] texId;
+        private bool texLoaded = false;
 
         public void LoadMaterialTextures(Material material)
         {
             texId = new int[material.GetMaterialTextureCount(TextureType.Diffuse)];
+            texLoaded = true;
             for (int i = 0; i < material.GetMaterialTextureCount(TextureType.Diffuse); i++)
             {
                 TextureSlot textureSlot;
@@ -53,7 +55,7 @@ namespace chess
             GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Diffuse, diffuseColor);
             GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Specular, specularColor);
             GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Shininess, shininess);
-            if (material.GetMaterialTexture(TextureType.Diffuse, index, out TextureSlot textureSlot))
+            if (texLoaded && material.GetMaterialTexture(TextureType.Diffuse, index, out TextureSlot textureSlot))
             {
                 GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.Texture2D, texId[index]);
