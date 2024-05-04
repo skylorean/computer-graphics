@@ -5,6 +5,9 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace canabola
+// починить ресайз
+// разобрать с location & связь position
+// сделать так, чтобы цвет менялся градиентом
 {
     internal class Window : GameWindow
     {

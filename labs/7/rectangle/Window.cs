@@ -4,6 +4,8 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
+// избавиться от мельтишения
+// и кружок желтый в центре
 namespace rectangle
 {
     internal class Window : GameWindow
@@ -71,16 +73,16 @@ namespace rectangle
 
             GL.Begin(PrimitiveType.Quads);
             GL.TexCoord2(0, 0);
-            GL.Vertex2(-0.8, -0.8);
+            GL.Vertex2(-1, -1);
 
             GL.TexCoord2(4, 0);
-            GL.Vertex2(0.8, -0.8);
+            GL.Vertex2(1, -1);
 
             GL.TexCoord2(4, 4);
-            GL.Vertex2(0.8, 0.8);
+            GL.Vertex2(1, 1);
 
             GL.TexCoord2(0, 4);
-            GL.Vertex2(-0.8, 0.8);
+            GL.Vertex2(-1, 1);
             GL.End();
 
             SwapBuffers();
@@ -103,12 +105,25 @@ namespace rectangle
 
         void SetupProjectionMatrix(int width, int height)
         {
-            double frustumSize = 2;
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
+
+            // Вычисляем соотношение сторон клиентской области окна
             double aspectRatio = ((double)width) / ((double)height);
+
+            // Размер видимого объема, которые должен поместиться в порт просмотра
+            double frustumSize = 2;
+
+            // Считаем, что высота видимой области равна FRUSTUM_SIZE
+            // (на расстоянии до ближней плоскости отсечения)
             double frustumHeight = frustumSize;
+
+            // Ширина видимой области рассчитывается согласно соотношению сторон окна
+            // (шире окно - шире область видимости и наоборот)
             double frustumWidth = frustumHeight * aspectRatio;
+
+            // Если ширина видимой области получилась меньше, чем FRUSTUM_SIZE,
+            // то корректируем размеры видимой области
             if (frustumWidth < frustumSize && (aspectRatio != 0))
             {
                 frustumWidth = frustumSize;

@@ -10,16 +10,14 @@ namespace rectangle
         {
             var nativeWinSettings = new NativeWindowSettings()
             {
-                ClientSize = new Vector2i(800, 800),
+                ClientSize = new Vector2i(600, 600),
                 Title = "Star",
                 Flags = ContextFlags.Default,
                 Profile = ContextProfile.Compatability,
             };
 
-
             Window window = new Window(GameWindowSettings.Default, nativeWinSettings);
             window.Run();
-
         }
     }
 }

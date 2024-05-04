@@ -6,22 +6,24 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Timers;
 
+using Timer = System.Timers.Timer;
+
 namespace parabola_to_hyperbola
 {
-    internal class Window : GameWindow
+    public class Window : GameWindow
     {
 
         private bool leftButtonPressed = false;
         private float mouseX = 0;
         private float mouseY = 0;
 
-        private float progress = 0.0f;
-        private int direction = 1;
-        private float speed = 0.05f;
+        private float _progress = 0.0f;
+        private int _direction = 1;
+        private readonly float SPEED = 0.05f;
 
         private int shaderProgram;
 
-        System.Timers.Timer timer = new();
+        private Timer _timer = new();
 
 
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
@@ -30,33 +32,30 @@ namespace parabola_to_hyperbola
             CenterWindow();
             Cursor = MouseCursor.Hand;
 
-            timer.Elapsed += Timer_Elapsed;
-            timer.Interval = 50;
+            _timer.Elapsed += TimerElapsed;
+            _timer.Interval = 50;
         }
 
-        private void Timer_Elapsed(object? sender, ElapsedEventArgs e)
+        private void TimerElapsed(object? sender, ElapsedEventArgs e)
         {
-            progress += direction * speed;
-            if (progress >= 1.0f)
-                direction = -1;
-            else if (progress <= 0.0f)
-                direction = 1;
+            _progress += _direction * SPEED;
+
+            if (_progress >= 1.0f)
+            {
+                _direction = -1;
+            }
+            else if (_progress <= 0.0f)
+            {
+                _direction = 1;
+            }
         }
 
         protected override void OnLoad()
         {
             base.OnLoad();
-            timer.Start();
+            _timer.Start();
 
-            GL.ClearColor(1f, 1f, 1f, 1);
-
-            GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.Lighting);
-            GL.Light(LightName.Light2, LightParameter.Position, new Vector4(1f, 1f, 1f, 0f));
-            GL.Light(LightName.Light2, LightParameter.Diffuse, new Vector4(1f, 1f, 1f, 1f));
-            GL.Light(LightName.Light2, LightParameter.Ambient, new Vector4(0.2f, 0.2f, 0.2f, 1f));
-            GL.Light(LightName.Light2, LightParameter.Specular, new Vector4(1f, 1f, 1f, 1f));
-            GL.Enable(EnableCap.Light2);
+            GL.ClearColor(Color4.White);
 
             GL.Enable(EnableCap.ColorMaterial);
             GL.Material(MaterialFace.Front, MaterialParameter.Diffuse, new Vector4(0.8f, 0.8f, 0f, 1f));
@@ -75,11 +74,6 @@ namespace parabola_to_hyperbola
             int vertexShader = GL.CreateShader(ShaderType.VertexShader);
             GL.ShaderSource(vertexShader, vertexShaderSource);
             GL.CompileShader(vertexShader);
-            //сделать через матрицу нормалей
-
-            //свет на modelview
-            //FragPos на modelview
-
 
             string fragmentShaderSource = File.ReadAllText("./shaders/fragmentShader.glsl");
             int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
@@ -111,22 +105,10 @@ namespace parabola_to_hyperbola
         {
             base.OnRenderFrame(e);
 
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            //GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+            GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.UseProgram(shaderProgram);
 
-            GL.GetFloat(GetPName.ModelviewMatrix, out Matrix4 modelMatrix);
-            GL.GetFloat(GetPName.ProjectionMatrix, out Matrix4 projectionMatrix);
-
-            var modelViewProjectionMatrix = projectionMatrix * modelMatrix;
-            Matrix3 normalMatrix = new Matrix3(modelMatrix).Inverted();
-            normalMatrix.Transpose();
-
-            GL.UniformMatrix3(GL.GetUniformLocation(shaderProgram, "normalMatrix"), false, ref normalMatrix);
-            GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram, "modelMatrix"), false, ref modelMatrix);
-            GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram, "projectionMatrix"), false, ref projectionMatrix);
-            GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram, "ModelViewProjectionMatrix"), false, ref modelViewProjectionMatrix);
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "progress"), progress);
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram, "progress"), _progress);
 
             GL.Begin(PrimitiveType.Quads);
             for (int i = -50; i < 50; i++)
@@ -167,8 +149,8 @@ namespace parabola_to_hyperbola
 
             // Вычисляем угол поворота вокруг осей Y и X как линейно зависящие
             // от смещения мыши по осям X и Y
-            float rotateX = dy * 180 / 500;
-            float rotateY = dx * 180 / 500;
+            float rotateX = dy * 180 / 200;
+            float rotateY = dx * 180 / 200;
             RotateCamera(rotateX, rotateY);
 
             // Сохраняем текущие координаты мыши
@@ -184,27 +166,46 @@ namespace parabola_to_hyperbola
         {
             GL.MatrixMode(MatrixMode.Modelview);
 
+            // Извлекаем текущее значение матрицы моделирования-вида
             GL.GetFloat(GetPName.ModelviewMatrix, out Matrix4 modelView);
 
+            // Извлекаем направления координатных осей камеры в 3д пространстве
+            // как коэффициенты строк матрицы моделирования-вида
             Vector3 xAxis = new(modelView[0, 0], modelView[1, 0], modelView[2, 0]);
             Vector3 yAxis = new(modelView[0, 1], modelView[1, 1], modelView[2, 1]);
 
+            // Поворачиваем вокруг осей x и y камеры
             GL.Rotate(x, xAxis);
             GL.Rotate(y, yAxis);
+
+            // В ходе умножения матриц могут возникать погрешности, которые,
+            // накапливаясь могут сильно искажать картинку
+            // Для их компенсации после каждой модификации матрицы моделирования-вида
+            // проводим ее ортонормирование
             NormalizeModelViewMatrix();
         }
 
         private void NormalizeModelViewMatrix()
         {
+            /*
+            Ортонормирование - приведение координатных осей к единичной длине (нормирование)
+            и взаимной перпендикулярности (ортогонализация)
+            Достичь этого можно при помощи нормализации координатных осей
+            и векторного произведения
+            */
             GL.GetFloat(GetPName.ModelviewMatrix, out Matrix4 modelView);
 
-            Vector3 xAxis = new(modelView[0, 0], modelView[1, 0], modelView[2, 0]);
+            Vector3 xAxis = new Vector3(modelView[0, 0], modelView[1, 0], modelView[2, 0]);
             xAxis.Normalize();
-            Vector3 yAxis = new(modelView[0, 1], modelView[1, 1], modelView[2, 1]);
+            Vector3 yAxis = new Vector3(modelView[0, 1], modelView[1, 1], modelView[2, 1]);
             yAxis.Normalize();
 
+            // Ось Z вычисляем через векторное произведение X и Y
+            // Z будет перпендикулярна плоскости векторов X и Y
             Vector3 zAxis = Vector3.Cross(xAxis, yAxis);
+            // И иметь единичную длину
             zAxis.Normalize();
+
             xAxis = Vector3.Cross(yAxis, zAxis);
             xAxis.Normalize();
             yAxis = Vector3.Cross(zAxis, xAxis);
@@ -216,7 +217,6 @@ namespace parabola_to_hyperbola
 
             GL.LoadMatrix(ref modelView);
         }
-
 
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
@@ -249,12 +249,25 @@ namespace parabola_to_hyperbola
 
         void SetupProjectionMatrix(int width, int height)
         {
-            double frustumSize = 2;
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
+
+            // Вычисляем соотношение сторон клиентской области окна
             double aspectRatio = ((double)width) / ((double)height);
+
+            // Размер видимого объема, которые должен поместиться в порт просмотра
+            double frustumSize = 2;
+
+            // Считаем, что высота видимой области равна FRUSTUM_SIZE
+            // (на расстоянии до ближней плоскости отсечения)
             double frustumHeight = frustumSize;
+
+            // Ширина видимой области рассчитывается согласно соотношению сторон окна
+            // (шире окно - шире область видимости и наоборот)
             double frustumWidth = frustumHeight * aspectRatio;
+
+            // Если ширина видимой области получилась меньше, чем FRUSTUM_SIZE,
+            // то корректируем размеры видимой области
             if (frustumWidth < frustumSize && (aspectRatio != 0))
             {
                 frustumWidth = frustumSize;
@@ -265,6 +278,16 @@ namespace parabola_to_hyperbola
                 -frustumHeight * 0.5, frustumHeight * 0.5, // top, bottom
                 frustumSize * 0.5, frustumSize * 200 // znear, zfar
                 );
+        }
+
+        protected override void OnUpdateFrame(FrameEventArgs args)
+        {
+            base.OnUpdateFrame(args);
+
+            if (KeyboardState.IsKeyDown(Keys.Escape))
+            {
+                Close();
+            }
         }
     }
 }
