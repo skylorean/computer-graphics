@@ -16,7 +16,6 @@ namespace chess
                 Flags = ContextFlags.Default,
             };
 
-
             Window window = new Window(GameWindowSettings.Default, nativeWinSettings);
             window.Run();
         }

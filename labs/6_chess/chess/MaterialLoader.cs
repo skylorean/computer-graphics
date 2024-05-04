@@ -9,56 +9,77 @@ namespace chess
 {
     public class MaterialLoader
     {
-        private int[] texId;
-        private bool texLoaded = false;
+        // Айдишники текстур
+        private int[] textureIds;
+
+        private bool textureLoaded = false;
 
         public void LoadMaterialTextures(Material material)
         {
-            texId = new int[material.GetMaterialTextureCount(TextureType.Diffuse)];
-            texLoaded = true;
+            textureIds = new int[material.GetMaterialTextureCount(TextureType.Diffuse)];
+            textureLoaded = true;
+
+            // Перебор всех текстур типа Diffuse
             for (int i = 0; i < material.GetMaterialTextureCount(TextureType.Diffuse); i++)
             {
                 TextureSlot textureSlot;
-                if (material.GetMaterialTexture(TextureType.Diffuse, i, out textureSlot))
+
+                // Достаю информацию о текстуре и кладу в textureSlot
+                if (!material.GetMaterialTexture(TextureType.Diffuse, i, out textureSlot))
                 {
-                    if (File.Exists(textureSlot.FilePath))
-                    {
-                        int texId = GL.GenTexture();
-                        GL.BindTexture(TextureTarget.Texture2D, texId);
-
-                        using (Bitmap bitmap = new Bitmap(textureSlot.FilePath))
-                        {
-                            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-                            bitmap.UnlockBits(data);
-                        }
-
-                        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
-                        this.texId[i] = texId;
-                    }
+                    continue;
                 }
+
+                if (!File.Exists(textureSlot.FilePath))
+                {
+                    continue;
+                }
+
+                // Привязка идентификатора к контексту
+                int textureId = GL.GenTexture();
+                GL.BindTexture(TextureTarget.Texture2D, textureId);
+
+                // Чтение и загрузка изображения
+                using (Bitmap bitmap = new Bitmap(textureSlot.FilePath))
+                {
+                    // Блокирую данные изображения в памяти для чтения
+                    BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                    // Загрузка в текстуру
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+
+                    // Освобождаю данные изображения
+                    bitmap.UnlockBits(data);
+                }
+
+                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+
+                textureIds[i] = textureId;
             }
         }
 
+        // Применение assimp материалов к объектам OpenGL
         public void ApplyMaterial(Material material, int index)
         {
             Color4 ambientColor = Color4DToColor4(material.ColorAmbient);
             Color4 diffuseColor = Color4DToColor4(material.ColorDiffuse);
             Color4 specularColor = Color4DToColor4(material.ColorSpecular);
             float shininess = material.Shininess;
+
             GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Ambient, ambientColor);
             GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Diffuse, diffuseColor);
             GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Specular, specularColor);
             GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Shininess, shininess);
-            if (texLoaded && material.GetMaterialTexture(TextureType.Diffuse, index, out TextureSlot textureSlot))
+
+            if (textureLoaded && material.GetMaterialTexture(TextureType.Diffuse, index, out TextureSlot textureSlot))
             {
                 GL.ActiveTexture(TextureUnit.Texture0);
-                GL.BindTexture(TextureTarget.Texture2D, texId[index]);
+                GL.BindTexture(TextureTarget.Texture2D, textureIds[index]);
             }
         }
 

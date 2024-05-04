@@ -14,7 +14,6 @@ namespace chess
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
             : base(gameWindowSettings, nativeWindowSettings)
         {
-            Cursor = MouseCursor.Hand;
             CenterWindow();
         }
 
@@ -64,12 +63,25 @@ namespace chess
 
         void SetupProjectionMatrix(int width, int height)
         {
-            double frustumSize = 2;
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
+
+            // Вычисляем соотношение сторон клиентской области окна
             double aspectRatio = ((double)width) / ((double)height);
+
+            // Размер видимого объема, которые должен поместиться в порт просмотра
+            double frustumSize = 2;
+
+            // Считаем, что высота видимой области равна FRUSTUM_SIZE
+            // (на расстоянии до ближней плоскости отсечения)
             double frustumHeight = frustumSize;
+
+            // Ширина видимой области рассчитывается согласно соотношению сторон окна
+            // (шире окно - шире область видимости и наоборот)
             double frustumWidth = frustumHeight * aspectRatio;
+
+            // Если ширина видимой области получилась меньше, чем FRUSTUM_SIZE,
+            // то корректируем размеры видимой области
             if (frustumWidth < frustumSize && (aspectRatio != 0))
             {
                 frustumWidth = frustumSize;
